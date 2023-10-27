@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 3333",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -18,7 +18,12 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@types/dat.gui": "^0.7.11",
+    "@types/stats.js": "^0.17.2",
+    "@types/three": "^0.157.2",
+    "dat.gui": "^0.7.9",
     "rxjs": "~7.8.0",
+    "three": "^0.157.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
