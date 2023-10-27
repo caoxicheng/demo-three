@@ -4,6 +4,10 @@ import { GUI } from 'dat.gui'
 import Stats from "three/examples/jsm/libs/stats.module";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
+interface MaterialCache {
+  transparentMaterial: THREE.MeshBasicMaterial
+}
+
 @Component({
   selector: 'app-my-threejs',
   template: '<div #container style="width: 100%; height: 100%;"></div>',
@@ -24,6 +28,8 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
   private axesHelper!: THREE.AxesHelper;
   private gridHelper!: THREE.GridHelper;
 
+  private materialCache!: MaterialCache;
+
   constructor(
     private el: ElementRef
   ) {
@@ -37,6 +43,7 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
     this.gridHelper.rotation.x = Math.PI / 2;
     this.initGUI();
     this.initStats();
+    this.initMaterial();
   }
 
   ngAfterViewInit() {
@@ -95,7 +102,7 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
   private createBoxGeometry(x: number, y: number, z: number): THREE.Mesh {
     // 创建长方体
     const geometry = new THREE.BoxGeometry(1,1,1);
-    const material = new THREE.MeshBasicMaterial({color: 0x00ff00, opacity: 0.9});
+    const material = this.materialCache.transparentMaterial;
     const cube = new THREE.Mesh(geometry, material);
     // 将长方体的位置设置
     cube.position.set(x, y, z);
@@ -172,6 +179,15 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
     this.renderer.setSize(this.containerRef.nativeElement.clientWidth, this.containerRef.nativeElement.clientHeight);
 
     this.el.nativeElement.appendChild(this.renderer.domElement);
+  }
+
+  private initMaterial(): void {
+    this.materialCache = {} as MaterialCache;
+    this.materialCache.transparentMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ff00, // 设置墙的颜色
+      transparent: true, // 启用透明
+      opacity: 0.5 // 设置透明度，0表示完全透明，1表示不透明
+    })
   }
 
 }
