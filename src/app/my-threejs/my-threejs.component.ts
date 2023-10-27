@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as THREE from 'three';
+import gsap from 'gsap';
 import { GUI } from 'dat.gui'
 import Stats from "three/examples/jsm/libs/stats.module";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -49,20 +50,6 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
   ngAfterViewInit() {
     this.initThree();
 
-    // 创建长方体
-
-    // this.scene.add(this.createBoxgeometry(0,0,0));
-    // this.scene.add(this.createBoxgeometry(0,0,1.5))
-    for (let z = .5; z < 3.5; z++) {
-      for (let y = 0; y < 3; y++) {
-        for (let x = 0; x < 3; x++) {
-          const cube = this.createBoxGeometry(x * 1.5, y * 1.5, z * 1.5);
-          this.cubes.push(cube);
-          this.scene.add(cube);
-        }
-      }
-    }
-
     const plane = this.createPlaneGeometry(4,4)
     plane.position.set(2,2, 0);
     this.scene.add(plane);
@@ -77,18 +64,14 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
     // 初始化旋转中心为 (0, 0, 0)
     controls.target.set(0, 0, 0);
 
+    this.testAction();
+
     this.animate();
   }
 
   animate(): void {
     // 更新帧率统计
     this.stats.begin();
-
-    // 在这里进行 Three.js 场景的更新操作
-
-    // 旋转长方体
-    // this.cube.rotation.x += 0.01;
-    // this.cube.rotation.y += 0.01;
 
     // 渲染 Three.js 场景
     this.renderer.render(this.scene, this.camera);
@@ -188,6 +171,55 @@ export class MyThreejsComponent implements OnInit, AfterViewInit{
       transparent: true, // 启用透明
       opacity: 0.5 // 设置透明度，0表示完全透明，1表示不透明
     })
+  }
+
+  private testAction(): void {
+
+    // 创建正方体的材质和几何体
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1); // 正方体的尺寸可以根据需要调整
+
+// 创建 3x3x3 网格的正方体
+    const gridSize = 3; // 网格的大小（3x3x3）
+    const gap = 0.2; // 间隔大小
+
+    for (let x = 0; x < gridSize; x++) {
+      for (let y = 0; y < gridSize; y++) {
+        for (let z = 0; z < gridSize; z++) {
+          const cube = new THREE.Mesh(cubeGeometry, this.materialCache.transparentMaterial);
+
+          // 计算每个正方体的位置坐标并添加间隔
+          const xPos = (x - 1) * (cubeGeometry.parameters.width + gap);
+          const yPos = (y - 1) * (cubeGeometry.parameters.height + gap);
+          const zPos = (z - 1) * (cubeGeometry.parameters.depth + gap);
+
+          cube.position.set(xPos, yPos, zPos);
+          // 创建GSAP动画来旋转正方体
+          const rotateAnimation = gsap.to(cube.rotation, {
+            duration: 2,
+            x: Math.PI * 2,
+            repeat: -1,
+            ease: "power1.inOut",
+            yoyo: true,
+          });
+
+          // 创建GSAP动画来移动正方体
+          const moveAnimation = gsap.to(cube.position, {
+            duration: 2,
+            x: 0,
+            y: 0,
+            z: 0,
+            repeat: -1,
+            yoyo: true,
+            ease: "power1.inOut",
+          });
+
+          this.scene.add(cube);
+        }
+      }
+    }
+
+
+
   }
 
 }
